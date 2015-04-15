@@ -12,11 +12,9 @@ Android app for finding handicap parking in Arab countries
 
 
 - Mentors:
- 	- Fahad AlQuait
-	- Hanan El Hadad
-	- Saeed Motamed
-	- Ahmed Mohamed
-	- Balsam Alkouz
+	- Razan Qraini
+	- Angela Zhang
+	- Abdullah Zoubair Ourad
 
 
 ####  App Description:
