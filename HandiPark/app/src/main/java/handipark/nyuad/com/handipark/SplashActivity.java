@@ -2,11 +2,8 @@ package handipark.nyuad.com.handipark;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -29,7 +26,7 @@ public class SplashActivity extends Activity {
 
         //set content view AFTER ABOVE sequence (to avoid crash)
         // setContentView(R.layout.activity_splash);
-        splashImage=(ImageView) findViewById(R.id.imageView2);
+        splashImage=(ImageView) findViewById(R.id.imageView);
         splashImage.setScaleType(ImageView.ScaleType.FIT_XY);
 
 

@@ -3,14 +3,12 @@ package handipark.nyuad.com.handipark;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.google.android.gms.location.LocationListener;
@@ -58,8 +56,22 @@ public class MapsActivity extends FragmentActivity implements LocationListener, 
             @Override
             public void onClick(View v) {
                 //addSpot();
-                Intent i = new Intent(getApplicationContext(), NavigatorActivity.class);
-                startActivity(i);
+                final String url = "http://45.33.86.33/add.php?lng="+longitude+"&lat="+latitude;
+                final HttpClient client = new DefaultHttpClient();
+                new AsyncTask<Void, Void, Void >(){
+                    protected Void doInBackground(Void... params){
+                        try {
+                            client.execute(new HttpGet(url));
+                        } catch(IOException e) {
+                            System.out.println("baaaaaaad" + e.getMessage());
+                        }
+                        return null;
+                    }
+                }.execute();
+                // Toast.makeText(getApplicationContext(),"done " , Toast.LENGTH_LONG).show();
+
+                //Intent i = new Intent(getApplicationContext(), NavigatorActivity.class);
+                //startActivity(i);
             }
         });
     }
@@ -140,7 +152,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener, 
         mMap.setOnMarkerClickListener(this);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         currentLocMarker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("My Spot");
-       // mMap.addMarker(currentLocMarker);
+        // mMap.addMarker(currentLocMarker);
 
         CameraPosition cameraPosition = new CameraPosition.Builder().target(
                 new LatLng(latitude, longitude)).zoom(12).build();
@@ -166,24 +178,24 @@ public class MapsActivity extends FragmentActivity implements LocationListener, 
                     // Get a handler that can be used to post to the main thread
                     Handler mainHandler = new Handler(getApplicationContext().getMainLooper());
                     Runnable myRunnable = new Runnable(){
-                            public void run () {
+                        public void run () {
 
-                                for (int i=0; i < rList.size(); i++) {
-                                    String strLng = rList.get(i).getLng();
-                                    String strLat = rList.get(i).getLat();
+                            for (int i=0; i < rList.size(); i++) {
+                                String strLng = rList.get(i).getLng();
+                                String strLat = rList.get(i).getLat();
 
-                                    double lng = Double.parseDouble(strLng);
-                                    double lat = Double.parseDouble(strLat);
+                                double lng = Double.parseDouble(strLng);
+                                double lat = Double.parseDouble(strLat);
 
-                                    Log.i("Lat Long", "" + lng + "" + lat);
+                                Log.i("Lat Long", "" + lng + "" + lat);
 
 
-                                    pin = new MarkerOptions().position(new LatLng(lat, lng)).title(rList.get(i).getId());
-                                    pin.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                                    Marker marker = mMap.addMarker(pin);
+                                pin = new MarkerOptions().position(new LatLng(lat, lng)).title(rList.get(i).getId());
+                                pin.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                                Marker marker = mMap.addMarker(pin);
 
-                                }
-                    }
+                            }
+                        }
                     }; // This is your code
                     mainHandler.post(myRunnable);
 
@@ -242,7 +254,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener, 
             //TextView tvAddress =(TextView) findViewById(R.id.tvAddress);
             //tvAddress.setText(locationAddress);
             //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-            Toast.makeText(getApplicationContext(),"Address: " + locationAddress, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Address: " + locationAddress, Toast.LENGTH_LONG).show();
 
         }
     }

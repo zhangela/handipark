@@ -1,22 +1,40 @@
 package handipark.nyuad.com.handipark;
 
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
-public class ReportActivity extends ActionBarActivity {
+import java.io.IOException;
+
+/**
+ * Created by ubuntu on 15/04/15.
+ */
+public class ReportActivity extends ActionBarActivity implements View.OnClickListener {
 
     public static ImageView img;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     public static Bitmap bmp;
     TextView locationText;
+    //final ImageButton submit;
+    double longitude;
+    double latitude;
+    Button submit;
+    EditText a;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +42,13 @@ public class ReportActivity extends ActionBarActivity {
         setContentView(R.layout.activity_report);
 
         img =(ImageView) findViewById(R.id.myView);
+
+        submit = (Button) findViewById(R.id.submit);
+        a= (EditText) findViewById(R.id.editText);
+        submit.setOnClickListener(this);
+
+
+
         locationText =(TextView) findViewById(R.id.locationText);
         img.setImageBitmap(bmp);
 
@@ -31,8 +56,8 @@ public class ReportActivity extends ActionBarActivity {
 
         if(gps.canGetLocation()){
 
-            double latitude = gps.getLatitude();
-            double longitude = gps.getLongitude();
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
             LocationAddress locationAddress = new LocationAddress();
             locationAddress.getAddressFromLocation(latitude, longitude,
                     getApplicationContext(), new GeocoderHandler());
@@ -44,7 +69,33 @@ public class ReportActivity extends ActionBarActivity {
             // Ask user to enable GPS/network in settings
             gps.showSettingsAlert();
         }
+
+
     }
+
+    @Override
+    public void onClick(View v) {
+
+
+        final String url = "http://45.33.86.33/report.php?lng="+longitude+"&lat="+latitude+"&comment="+a.getText().toString();
+        final HttpClient client = new DefaultHttpClient();
+        new AsyncTask<Void, Void, Void >(){
+            protected Void doInBackground(Void... params){
+                try {
+                    client.execute(new HttpGet(url));
+                } catch(IOException e) {
+                    System.out.println("baaaaaaad" + e.getMessage());
+                }
+                return null;
+            }
+        }.execute();
+
+        this.finish();
+        return;
+
+    }
+
+
 
     private class GeocoderHandler extends Handler {
         @Override
@@ -82,6 +133,12 @@ public class ReportActivity extends ActionBarActivity {
             return true;
         }
 
+
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        this.finish();
+        return;
     }
 }
